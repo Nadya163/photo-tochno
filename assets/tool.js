@@ -17,6 +17,51 @@
   });
   PRESETS.custom = { label:'Свой размер', full:'свои параметры', w:300, h:400, minKB:10, maxKB:200 };
 
+  const COPY = {
+    gosuslugi: {
+      eyebrow:'ГОСУСЛУГИ',
+      h1:'Фото на Госуслуги за 10 секунд',
+      intro:'По официальным требованиям портала фото должно быть <strong>35×45 мм</strong>, разрешением не менее 300–450 DPI, весом от 10 КБ до 5 МБ. Загрузите фото — подгоним автоматически.'
+    },
+    passport: {
+      eyebrow:'ЗАГРАНПАСПОРТ',
+      h1:'Фото на загранпаспорт за 10 секунд',
+      intro:'Для заявления на загранпаспорт нового образца через Госуслуги фото должно быть <strong>35×45 мм</strong>, разрешением не менее 300 DPI, весом до 5 МБ. Загрузите фото — получите готовый файл.'
+    },
+    ege: {
+      eyebrow:'ЕГЭ / ОГЭ',
+      h1:'Фото для регистрации на ЕГЭ и ОГЭ',
+      intro:'Для регистрации на ЕГЭ и ОГЭ часто используется тот же формат, что и для других документов через Госуслуги — <strong>35×45 мм</strong>. Загрузите фото — получите готовый файл нужного размера.'
+    },
+    driver: {
+      eyebrow:'ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ',
+      h1:'Фото на права за 10 секунд',
+      intro:'Для водительского удостоверения обычно требуется фото <strong>30×40 мм</strong>. Загрузите фото — подгоним размер и вес файла автоматически.'
+    },
+    military: {
+      eyebrow:'ВОЕННЫЙ БИЛЕТ',
+      h1:'Фото на военный билет за 10 секунд',
+      intro:'Для военного билета обычно требуется фото <strong>30×40 мм</strong>, как и для водительского удостоверения. Загрузите фото — получите готовый файл.'
+    },
+    custom: {
+      eyebrow:'СВОЙ РАЗМЕР',
+      h1:'Задайте свой размер фото',
+      intro:'Укажите нужные ширину, высоту и допустимый вес файла — подгоним фото под ваши параметры.'
+    }
+  };
+
+  const pageEyebrow = document.getElementById('pageEyebrow');
+  const pageH1 = document.getElementById('pageH1');
+  const pageIntro = document.getElementById('pageIntro');
+
+  function updatePageCopy(key){
+    const c = COPY[key];
+    if(!c || !pageH1) return;
+    pageEyebrow.textContent = c.eyebrow;
+    pageH1.textContent = c.h1;
+    pageIntro.innerHTML = c.intro;
+  }
+
   let currentKey = (window.TOCHNO_DEFAULT_PRESET && PRESETS[window.TOCHNO_DEFAULT_PRESET]) ? window.TOCHNO_DEFAULT_PRESET : 'gosuslugi';
   const presetsEl = document.getElementById('presets');
   const customFields = document.getElementById('customFields');
@@ -52,6 +97,7 @@
         renderChips();
         customFields.hidden = key !== 'custom';
         updateNote();
+        updatePageCopy(key);
         if(lastImg) processImage();
       });
       presetsEl.appendChild(btn);
