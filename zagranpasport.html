@@ -1,100 +1,190 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Фото на загранпаспорт — 35×45 мм, вес до 5 МБ | Точно</title>
-<meta name="description" content="Онлайн-инструмент для фото на загранпаспорт нового образца через Госуслуги: размер 35×45 мм, разрешение от 300 DPI, вес до 5 МБ.">
-<link rel="canonical" href="https://photo-tochno.vercel.app/zagranpasport.html">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./assets/style.css">
-</head>
-<body>
-<div class="page">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Фото на загранпаспорт — 35×45 мм, вес до 5 МБ | Точно</title>
+    <meta
+      name="description"
+      content="Онлайн-инструмент для фото на загранпаспорт нового образца через Госуслуги: размер 35×45 мм, разрешение от 300 DPI, вес до 5 МБ."
+    />
+    <link
+      rel="canonical"
+      href="https://photo-tochno.vercel.app/zagranpasport.html"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./assets/style.css" />
+  </head>
+  <body>
+    <div class="page">
+      <span class="eyebrow" id="pageEyebrow">ЗАГРАНПАСПОРТ</span>
+      <h1 id="pageH1">Фото на загранпаспорт за 10 секунд</h1>
+      <p class="sub" id="pageIntro">
+        Для заявления на загранпаспорт нового образца через Госуслуги фото
+        должно быть <strong>35×45 мм</strong>, разрешением не менее 300 DPI,
+        весом до 5 МБ. Загрузите фото — получите готовый файл.
+      </p>
 
-  <span class="eyebrow">ЗАГРАНПАСПОРТ</span>
-  <h1>Фото на загранпаспорт за 10 секунд</h1>
-  <p class="sub">Для заявления на загранпаспорт нового образца через Госуслуги фото должно быть <strong>35×45 мм</strong>, разрешением не менее 300 DPI, весом до 5 МБ. Загрузите фото — получите готовый файл.</p>
+      <div class="presets" id="presets"></div>
 
-  <div class="presets" id="presets"></div>
-
-  <div class="custom-fields" id="customFields" hidden>
-    <label>Ширина, px <input type="number" id="customW" value="300" min="50" max="4000"></label>
-    <label>Высота, px <input type="number" id="customH" value="400" min="50" max="4000"></label>
-    <label>Мин. вес, КБ <input type="number" id="customMinKB" value="10" min="1" max="20000"></label>
-    <label>Макс. вес, КБ <input type="number" id="customMaxKB" value="200" min="5" max="20000"></label>
-  </div>
-
-  <p class="preset-note" id="presetNote"></p>
-
-  <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Загрузить фото">
-    <input type="file" id="fileInput" accept="image/*" hidden>
-    <div class="dz-inner">
-      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#1E2A38" stroke-width="1.6"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
-      <p class="dz-title">Перетащите фото сюда или нажмите</p>
-      <p class="dz-hint">JPG, PNG, WEBP — до 20 МБ</p>
-    </div>
-  </div>
-
-  <div class="result" id="result" hidden>
-    <img class="preview-thumb" id="previewThumb" alt="Предпросмотр">
-    <div class="gauge-wrap">
-      <svg id="gauge" viewBox="0 0 220 130">
-        <path d="M20,110 A90,90 0 0 1 200,110" stroke="#D7DAD3" stroke-width="10" fill="none" stroke-linecap="round"/>
-        <line id="targetTick" x1="110" y1="30" x2="110" y2="42" stroke="#A13D3D" stroke-width="4" stroke-linecap="round"/>
-        <g id="needleGroup">
-          <line x1="110" y1="110" x2="110" y2="34" stroke="#1E2A38" stroke-width="4" stroke-linecap="round"/>
-          <circle cx="110" cy="110" r="7" fill="#1E2A38"/>
-        </g>
-      </svg>
-      <div class="gauge-readout">
-        <div class="gauge-value num-face" id="gaugeValue">—</div>
-        <div class="gauge-unit">КБ ГОТОВО</div>
+      <div class="custom-fields" id="customFields" hidden>
+        <label
+          >Ширина, px
+          <input type="number" id="customW" value="300" min="50" max="4000"
+        /></label>
+        <label
+          >Высота, px
+          <input type="number" id="customH" value="400" min="50" max="4000"
+        /></label>
+        <label
+          >Мин. вес, КБ
+          <input type="number" id="customMinKB" value="10" min="1" max="20000"
+        /></label>
+        <label
+          >Макс. вес, КБ
+          <input type="number" id="customMaxKB" value="200" min="5" max="20000"
+        /></label>
       </div>
+
+      <p class="preset-note" id="presetNote"></p>
+
+      <div
+        class="dropzone"
+        id="dropzone"
+        tabindex="0"
+        role="button"
+        aria-label="Загрузить фото"
+      >
+        <input type="file" id="fileInput" accept="image/*" hidden />
+        <div class="dz-inner">
+          <svg
+            width="34"
+            height="34"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#1E2A38"
+            stroke-width="1.6"
+          >
+            <path d="M12 16V4M12 4l-4 4M12 4l4 4" />
+            <path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" />
+          </svg>
+          <p class="dz-title">Перетащите фото сюда или нажмите</p>
+          <p class="dz-hint">JPG, PNG, WEBP — до 20 МБ</p>
+        </div>
+      </div>
+
+      <div class="result" id="result" hidden>
+        <img class="preview-thumb" id="previewThumb" alt="Предпросмотр" />
+        <div class="gauge-wrap">
+          <svg id="gauge" viewBox="0 0 220 130">
+            <path
+              d="M20,110 A90,90 0 0 1 200,110"
+              stroke="#D7DAD3"
+              stroke-width="10"
+              fill="none"
+              stroke-linecap="round"
+            />
+            <line
+              id="targetTick"
+              x1="110"
+              y1="30"
+              x2="110"
+              y2="42"
+              stroke="#A13D3D"
+              stroke-width="4"
+              stroke-linecap="round"
+            />
+            <g id="needleGroup">
+              <line
+                x1="110"
+                y1="110"
+                x2="110"
+                y2="34"
+                stroke="#1E2A38"
+                stroke-width="4"
+                stroke-linecap="round"
+              />
+              <circle cx="110" cy="110" r="7" fill="#1E2A38" />
+            </g>
+          </svg>
+          <div class="gauge-readout">
+            <div class="gauge-value num-face" id="gaugeValue">—</div>
+            <div class="gauge-unit">КБ ГОТОВО</div>
+          </div>
+        </div>
+        <p class="target-line">
+          Цель: <span class="num-face" id="targetLabel">—</span>
+        </p>
+        <p class="diff-line" id="diffLine"></p>
+        <div>
+          <span class="stamp-badge" id="stampBadge">✓ Точно в размер</span>
+        </div>
+        <div>
+          <a class="btn-primary" id="downloadBtn" download>Скачать фото</a>
+        </div>
+        <p class="privacy-note">
+          🔒 Файл обработан локально и никуда не загружался
+        </p>
+      </div>
+
+      <canvas id="workCanvas" hidden></canvas>
+
+      <section class="how">
+        <h2>Как это работает</h2>
+        <ol>
+          <li>
+            <span class="step-num num-face">01</span>Выберите документ или
+            задайте свой размер вручную
+          </li>
+          <li>
+            <span class="step-num num-face">02</span>Загрузите фото — обрезка и
+            сжатие происходят сразу
+          </li>
+          <li>
+            <span class="step-num num-face">03</span>Скачайте файл, который
+            точно подходит под требования
+          </li>
+        </ol>
+      </section>
+
+      <section class="tips">
+        <h2>Как сделать подходящее фото</h2>
+        <ul>
+          <li>Снимайте на светлом, однотонном фоне (подойдёт белая стена)</li>
+          <li>Лицо анфас, без улыбки, оба глаза открыты и видны полностью</li>
+          <li>
+            Чёрно-белое фото — 8 бит, цветное — 24 бита (это происходит
+            автоматически при сохранении в JPEG)
+          </li>
+          <li>Не наносите ретушь и эффекты — только исходное фото</li>
+        </ul>
+      </section>
+
+      <p class="disclaimer">
+        Размер, вес и разрешение приведены по требованиям, актуальным для подачи
+        заявления на загранпаспорт нового образца через Госуслуги. Перед подачей
+        сверьтесь с актуальной версией требований на портале — правила
+        периодически уточняются.
+      </p>
+
+      <nav class="doc-links">
+        <span>Другие документы:</span>
+        <a href="/">Все документы</a>
+        <a href="/gosuslugi.html">Госуслуги</a>
+        <a href="/ege.html">ЕГЭ / ОГЭ</a>
+        <a href="/prava.html">Права</a>
+        <a href="/voenniy-bilet.html">Военный билет</a>
+      </nav>
     </div>
-    <p class="target-line">Цель: <span class="num-face" id="targetLabel">—</span></p>
-    <p class="diff-line" id="diffLine"></p>
-    <div><span class="stamp-badge" id="stampBadge">✓ Точно в размер</span></div>
-    <div><a class="btn-primary" id="downloadBtn" download>Скачать фото</a></div>
-    <p class="privacy-note">🔒 Файл обработан локально и никуда не загружался</p>
-  </div>
 
-  <canvas id="workCanvas" hidden></canvas>
-
-  <section class="how">
-    <h2>Как это работает</h2>
-    <ol>
-      <li><span class="step-num num-face">01</span>Выберите документ или задайте свой размер вручную</li>
-      <li><span class="step-num num-face">02</span>Загрузите фото — обрезка и сжатие происходят сразу</li>
-      <li><span class="step-num num-face">03</span>Скачайте файл, который точно подходит под требования</li>
-    </ol>
-  </section>
-
-  <section class="tips">
-    <h2>Как сделать подходящее фото</h2>
-    <ul>
-      <li>Снимайте на светлом, однотонном фоне (подойдёт белая стена)</li>
-      <li>Лицо анфас, без улыбки, оба глаза открыты и видны полностью</li>
-      <li>Чёрно-белое фото — 8 бит, цветное — 24 бита (это происходит автоматически при сохранении в JPEG)</li>
-      <li>Не наносите ретушь и эффекты — только исходное фото</li>
-    </ul>
-  </section>
-
-  <p class="disclaimer">Размер, вес и разрешение приведены по требованиям, актуальным для подачи заявления на загранпаспорт нового образца через Госуслуги. Перед подачей сверьтесь с актуальной версией требований на портале — правила периодически уточняются.</p>
-
-  <nav class="doc-links">
-    <span>Другие документы:</span>
-    <a href="/">Все документы</a>
-    <a href="/gosuslugi.html">Госуслуги</a>
-    <a href="/ege.html">ЕГЭ / ОГЭ</a>
-    <a href="/prava.html">Права</a>
-    <a href="/voenniy-bilet.html">Военный билет</a>
-  </nav>
-</div>
-
-<script>window.TOCHNO_DEFAULT_PRESET = 'passport';</script>
-<script src="./assets/tool.js"></script>
-</body>
+    <script>
+      window.TOCHNO_DEFAULT_PRESET = "passport";
+    </script>
+    <script src="./assets/tool.js"></script>
+  </body>
 </html>
