@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фото на документы — точный размер и вес | Точно</title>
+<meta name="description" content="Бесплатно и без загрузки на сервер: подгоните фото под требования Госуслуг, загранпаспорта, ЕГЭ, водительского удостоверения. Точный размер в пикселях и вес в КБ.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #EFF1EC;
+    --paper-raised: #FFFFFF;
+    --ink: #1E2A38;
+    --ink-soft: #4B5A67;
+    --muted: #6E7A78;
+    --line: #D7DAD3;
+    --stamp: #A13D3D;
+    --stamp-soft: #F3E4E1;
+    --verified: #2F6E58;
+    --verified-soft: #E4EEE8;
+    --radius: 14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', system-ui, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+  }
+  .num-face{font-family:'IBM Plex Mono', monospace;}
+  .page{
+    max-width:640px;
+    margin:0 auto;
+    padding:48px 20px 80px;
+  }
+  .eyebrow{
+    display:inline-block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--stamp);
+    background:var(--stamp-soft);
+    padding:5px 10px;
+    border-radius:5px;
+    margin-bottom:16px;
+  }
+  h1{
+    font-size:clamp(26px,4.4vw,36px);
+    line-height:1.15;
+    margin:0 0 12px;
+    letter-spacing:-0.01em;
+  }
+  .sub{
+    color:var(--ink-soft);
+    font-size:16px;
+    max-width:46ch;
+    margin:0 0 32px;
+  }
+  .sub strong{color:var(--ink); font-weight:600;}
+
+  .presets{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:14px;
+  }
+  .chip{
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:14px;
+    font-weight:500;
+    padding:9px 14px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:var(--paper-raised);
+    color:var(--ink-soft);
+    cursor:pointer;
+    transition:border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .chip:hover{border-color:var(--ink-soft);}
+  .chip.active{
+    background:var(--ink);
+    color:var(--paper-raised);
+    border-color:var(--ink);
+  }
+
+  .custom-fields{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:14px;
+    margin-bottom:20px;
+  }
+  .custom-fields label{
+    font-size:12px;
+    color:var(--muted);
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+    flex:1;
+    min-width:90px;
+  }
+  .custom-fields input{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:15px;
+    padding:8px 9px;
+    border-radius:8px;
+    border:1px solid var(--line);
+    color:var(--ink);
+    background:var(--paper);
+  }
+  .custom-fields input:focus{outline:2px solid var(--ink); outline-offset:1px;}
+
+  .preset-note{
+    font-size:13px;
+    color:var(--muted);
+    margin:0 0 26px;
+  }
+
+  .dropzone{
+    background:var(--paper-raised);
+    border:2px dashed var(--line);
+    border-radius:var(--radius);
+    padding:40px 20px;
+    text-align:center;
+    cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .dropzone:hover, .dropzone.drag{
+    border-color:var(--ink);
+    background:#FBFBFA;
+  }
+  .dropzone:focus-visible{outline:3px solid var(--ink); outline-offset:3px;}
+  .dz-inner svg{margin-bottom:10px; opacity:.55;}
+  .dz-title{font-size:16px; font-weight:500; margin:0 0 4px;}
+  .dz-hint{font-size:13px; color:var(--muted); margin:0;}
+
+  .result{
+    margin-top:28px;
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:24px 20px 20px;
+    text-align:center;
+  }
+  .gauge-wrap{position:relative; width:220px; margin:0 auto;}
+  #gauge{display:block; width:100%; height:auto;}
+  #needleGroup{
+    transform-origin:110px 110px;
+    transform:rotate(-90deg);
+    transition:transform 1.1s cubic-bezier(.2,.9,.25,1);
+  }
+  .gauge-readout{
+    position:absolute;
+    left:0; right:0; bottom:6px;
+    text-align:center;
+  }
+  .gauge-value{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:26px;
+    font-weight:600;
+  }
+  .gauge-unit{
+    font-size:12px;
+    color:var(--muted);
+    letter-spacing:.06em;
+  }
+  .target-line{
+    font-size:13px;
+    color:var(--muted);
+    margin-top:6px;
+  }
+  .target-line .num-face{color:var(--ink-soft);}
+  .diff-line{
+    font-size:12.5px;
+    color:var(--muted);
+    margin:2px 0 0;
+    opacity:0;
+    transition:opacity .3s ease;
+  }
+  .diff-line.show{opacity:1;}
+
+  .stamp-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:.05em;
+    color:var(--verified);
+    background:var(--verified-soft);
+    border:1px solid var(--verified);
+    padding:6px 12px;
+    border-radius:7px;
+    margin-top:14px;
+    transform:rotate(-3deg) scale(.85);
+    opacity:0;
+    transition:transform .35s cubic-bezier(.34,1.56,.64,1), opacity .35s ease;
+  }
+  .stamp-badge.show{
+    opacity:1;
+    transform:rotate(-3deg) scale(1);
+  }
+  .stamp-badge.warn{
+    color:var(--stamp);
+    background:var(--stamp-soft);
+    border-color:var(--stamp);
+  }
+
+  .btn-primary{
+    display:inline-block;
+    margin-top:18px;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-weight:600;
+    font-size:15px;
+    color:var(--paper-raised);
+    background:var(--ink);
+    border:none;
+    padding:13px 26px;
+    border-radius:9px;
+    text-decoration:none;
+    cursor:pointer;
+    opacity:0;
+    transform:translateY(4px);
+    transition:opacity .3s ease, transform .3s ease, background .15s ease;
+    pointer-events:none;
+  }
+  .btn-primary.show{opacity:1; transform:translateY(0); pointer-events:auto;}
+  .btn-primary:hover{background:var(--stamp);}
+
+  .preview-thumb{
+    width:88px; height:auto;
+    border-radius:8px;
+    border:1px solid var(--line);
+    margin-bottom:16px;
+    display:none;
+  }
+  .preview-thumb.show{display:inline-block;}
+
+  .how{margin-top:56px;}
+  .how h2{font-size:14px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:16px; font-weight:600;}
+  .how ol{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:14px;}
+  .how li{display:flex; gap:14px; align-items:flex-start; font-size:15px; color:var(--ink-soft);}
+  .how .step-num{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    color:var(--stamp);
+    background:var(--stamp-soft);
+    width:26px; height:26px;
+    flex-shrink:0;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  .disclaimer{
+    margin-top:36px;
+    font-size:12.5px;
+    color:var(--muted);
+    border-top:1px solid var(--line);
+    padding-top:16px;
+  }
+
+  .privacy-note{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:12.5px;
+    color:var(--muted);
+    margin-top:14px;
+  }
+
+  @media (max-width:480px){
+    .page{padding:32px 16px 60px;}
+    .custom-fields label{min-width:80px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    #needleGroup, .stamp-badge, .btn-primary{transition:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <span class="eyebrow">Точный размер фото</span>
+  <h1>Фото под документ за 10 секунд</h1>
+  <p class="sub">Выберите, куда подаёте фото — получите файл <strong>нужного размера и веса</strong>. Обработка идёт прямо в браузере, файл никуда не отправляется.</p>
+
+  <div class="presets" id="presets"></div>
+
+  <div class="custom-fields" id="customFields" hidden>
+    <label>Ширина, px <input type="number" id="customW" value="300" min="50" max="4000"></label>
+    <label>Высота, px <input type="number" id="customH" value="400" min="50" max="4000"></label>
+    <label>Мин. вес, КБ <input type="number" id="customMinKB" value="10" min="1" max="20000"></label>
+    <label>Макс. вес, КБ <input type="number" id="customMaxKB" value="200" min="5" max="20000"></label>
+  </div>
+
+  <p class="preset-note" id="presetNote"></p>
+
+  <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Загрузить фото">
+    <input type="file" id="fileInput" accept="image/*" hidden>
+    <div class="dz-inner">
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#1E2A38" stroke-width="1.6"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+      <p class="dz-title">Перетащите фото сюда или нажмите</p>
+      <p class="dz-hint">JPG, PNG, WEBP — до 20 МБ</p>
+    </div>
+  </div>
+
+  <div class="result" id="result" hidden>
+    <img class="preview-thumb" id="previewThumb" alt="Предпросмотр">
+    <div class="gauge-wrap">
+      <svg id="gauge" viewBox="0 0 220 130">
+        <path d="M20,110 A90,90 0 0 1 200,110" stroke="#D7DAD3" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <line id="targetTick" x1="110" y1="30" x2="110" y2="42" stroke="#A13D3D" stroke-width="4" stroke-linecap="round"/>
+        <g id="needleGroup">
+          <line x1="110" y1="110" x2="110" y2="34" stroke="#1E2A38" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="110" cy="110" r="7" fill="#1E2A38"/>
+        </g>
+      </svg>
+      <div class="gauge-readout">
+        <div class="gauge-value num-face" id="gaugeValue">—</div>
+        <div class="gauge-unit">КБ ГОТОВО</div>
+      </div>
+    </div>
+    <p class="target-line">Цель: <span class="num-face" id="targetLabel">—</span></p>
+    <p class="diff-line" id="diffLine"></p>
+    <div><span class="stamp-badge" id="stampBadge">✓ Точно в размер</span></div>
+    <div><a class="btn-primary" id="downloadBtn" download>Скачать фото</a></div>
+    <p class="privacy-note">🔒 Файл обработан локально и никуда не загружался</p>
+  </div>
+
+  <canvas id="workCanvas" hidden></canvas>
+
+  <section class="how">
+    <h2>Как это работает</h2>
+    <ol>
+      <li><span class="step-num num-face">01</span>Выберите документ или задайте свой размер вручную</li>
+      <li><span class="step-num num-face">02</span>Загрузите фото — обрезка и сжатие происходят сразу</li>
+      <li><span class="step-num num-face">03</span>Скачайте файл, который точно подходит под требования</li>
+    </ol>
+  </section>
+
+  <p class="disclaimer">Размер и вес файла для Госуслуг — по официальным требованиям портала. Для загранпаспорта, ЕГЭ/ОГЭ, прав и военного билета значения указаны по общим ориентирам — перед подачей сверьте актуальные требования конкретного ведомства, особенно если это касается веса файла в КБ.</p>
+</div>
+
+<script>
+(function(){
+  const DPI = 300; // нижняя граница требования «не менее 300–450 DPI» — файл компактнее, требованию отвечает
+  function mmToPx(mm){ return Math.round(mm / 25.4 * DPI); }
+
+  const RAW_PRESETS = {
+    gosuslugi: { label:'Госуслуги', full:'Госуслуги (фото профиля)', mmW:35, mmH:45, minKB:10, maxKB:5120 },
+    passport:  { label:'Загранпаспорт', full:'Загранпаспорт (фото для анкеты)', mmW:35, mmH:45, minKB:10, maxKB:5120 },
+    ege:       { label:'ЕГЭ / ОГЭ', full:'ЕГЭ / ОГЭ (регистрация)', mmW:35, mmH:45, minKB:10, maxKB:5120 },
+    driver:    { label:'Права', full:'Водительское удостоверение', mmW:30, mmH:40, minKB:10, maxKB:5120 },
+    military:  { label:'Военный билет', full:'Военный билет', mmW:30, mmH:40, minKB:10, maxKB:5120 }
+  };
+
+  const PRESETS = {};
+  Object.keys(RAW_PRESETS).forEach(key=>{
+    const p = RAW_PRESETS[key];
+    PRESETS[key] = { label:p.label, full:p.full, mmW:p.mmW, mmH:p.mmH, w:mmToPx(p.mmW), h:mmToPx(p.mmH), minKB:p.minKB, maxKB:p.maxKB };
+  });
+  PRESETS.custom = { label:'Свой размер', full:'свои параметры', w:300, h:400, minKB:10, maxKB:200 };
+
+  let currentKey = 'gosuslugi';
+  const presetsEl = document.getElementById('presets');
+  const customFields = document.getElementById('customFields');
+  const presetNote = document.getElementById('presetNote');
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('fileInput');
+  const result = document.getElementById('result');
+  const previewThumb = document.getElementById('previewThumb');
+  const gaugeValue = document.getElementById('gaugeValue');
+  const targetLabel = document.getElementById('targetLabel');
+  const diffLine = document.getElementById('diffLine');
+  const stampBadge = document.getElementById('stampBadge');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const needleGroup = document.getElementById('needleGroup');
+  const targetTick = document.getElementById('targetTick');
+  const workCanvas = document.getElementById('workCanvas');
+  const customW = document.getElementById('customW');
+  const customH = document.getElementById('customH');
+  const customMinKB = document.getElementById('customMinKB');
+  const customMaxKB = document.getElementById('customMaxKB');
+  let lastImg = null;
+  let lastFileName = 'photo';
+
+  function renderChips(){
+    presetsEl.innerHTML = '';
+    Object.keys(PRESETS).forEach(key=>{
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'chip' + (key===currentKey ? ' active' : '');
+      btn.textContent = PRESETS[key].label;
+      btn.addEventListener('click', ()=>{
+        currentKey = key;
+        renderChips();
+        customFields.hidden = key !== 'custom';
+        updateNote();
+        if(lastImg) processImage();
+      });
+      presetsEl.appendChild(btn);
+    });
+  }
+
+  function updateNote(){
+    if(currentKey === 'custom'){
+      presetNote.textContent = 'Укажите нужные ширину, высоту и допустимый вес файла.';
+    } else {
+      const p = PRESETS[currentKey];
+      const mmPart = p.mmW ? ` (${p.mmW}×${p.mmH} мм при ${DPI} DPI)` : '';
+      presetNote.textContent = `${p.full}: ${p.w}×${p.h} px${mmPart}, от ${p.minKB.toLocaleString('ru-RU')} КБ до ${(p.maxKB/1024).toLocaleString('ru-RU', {maximumFractionDigits:1})} МБ.`;
+    }
+  }
+
+  function getTarget(){
+    if(currentKey === 'custom'){
+      return {
+        w: Math.max(20, parseInt(customW.value,10) || 300),
+        h: Math.max(20, parseInt(customH.value,10) || 400),
+        minKB: Math.max(1, parseInt(customMinKB.value,10) || 10),
+        maxKB: Math.max(5, parseInt(customMaxKB.value,10) || 200)
+      };
+    }
+    const p = PRESETS[currentKey];
+    return { w:p.w, h:p.h, minKB:p.minKB, maxKB:p.maxKB };
+  }
+
+  renderChips();
+  updateNote();
+
+  // --- drag & drop / file selection ---
+  dropzone.addEventListener('click', ()=> fileInput.click());
+  dropzone.addEventListener('keydown', e=>{
+    if(e.key==='Enter' || e.key===' '){ e.preventDefault(); fileInput.click(); }
+  });
+  ['dragenter','dragover'].forEach(evt=>{
+    dropzone.addEventListener(evt, e=>{ e.preventDefault(); dropzone.classList.add('drag'); });
+  });
+  ['dragleave','drop'].forEach(evt=>{
+    dropzone.addEventListener(evt, e=>{ e.preventDefault(); dropzone.classList.remove('drag'); });
+  });
+  dropzone.addEventListener('drop', e=>{
+    const f = e.dataTransfer.files && e.dataTransfer.files[0];
+    if(f) handleFile(f);
+  });
+  fileInput.addEventListener('change', e=>{
+    const f = e.target.files && e.target.files[0];
+    if(f) handleFile(f);
+  });
+
+  let customDebounce = null;
+  [customW, customH, customMinKB, customMaxKB].forEach(input=>{
+    input.addEventListener('input', ()=>{
+      if(currentKey !== 'custom' || !lastImg) return;
+      clearTimeout(customDebounce);
+      customDebounce = setTimeout(processImage, 350);
+    });
+  });
+
+  function loadImage(file){
+    return new Promise((resolve, reject)=>{
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = ()=>{ resolve(img); };
+      img.onerror = reject;
+      img.src = url;
+    });
+  }
+
+  // cover-crop draw: fills target w×h, cropping centered, no distortion
+  function drawCover(img, targetW, targetH){
+    const canvas = workCanvas;
+    canvas.width = targetW;
+    canvas.height = targetH;
+    const ctx = canvas.getContext('2d');
+    const scale = Math.max(targetW / img.naturalWidth, targetH / img.naturalHeight);
+    const srcW = targetW / scale;
+    const srcH = targetH / scale;
+    const srcX = (img.naturalWidth - srcW) / 2;
+    const srcY = (img.naturalHeight - srcH) / 2;
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0,0,targetW,targetH);
+    ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, targetW, targetH);
+    return canvas;
+  }
+
+  function canvasToBlob(canvas, quality){
+    return new Promise(resolve=> canvas.toBlob(b=>resolve(b), 'image/jpeg', quality));
+  }
+
+  async function compressToTarget(canvas, targetBytes){
+    let low = 0.05, high = 0.95, best = null;
+    for(let i=0;i<8;i++){
+      const q = (low+high)/2;
+      const blob = await canvasToBlob(canvas, q);
+      if(blob.size > targetBytes){ high = q; } else { best = blob; low = q; }
+    }
+    if(!best){ best = await canvasToBlob(canvas, low); }
+    return best;
+  }
+
+  function setGauge(valueKB, maxKB, targetKB){
+    const angle = -90 + 180 * Math.min(Math.max(valueKB / maxKB, 0), 1);
+    needleGroup.style.transform = `rotate(${angle}deg)`;
+    const tAngle = -90 + 180 * Math.min(Math.max(targetKB / maxKB, 0), 1);
+    const rad = tAngle * Math.PI / 180;
+    const cx = 110, cy = 110, rOuter = 90, rInner = 76;
+    const x1 = cx + rInner * Math.sin(rad), y1 = cy - rInner * Math.cos(rad);
+    const x2 = cx + rOuter * Math.sin(rad), y2 = cy - rOuter * Math.cos(rad);
+    targetTick.setAttribute('x1', x1); targetTick.setAttribute('y1', y1);
+    targetTick.setAttribute('x2', x2); targetTick.setAttribute('y2', y2);
+  }
+
+  async function handleFile(file){
+    if(!file.type.startsWith('image/')){ return; }
+    lastFileName = file.name ? file.name.replace(/\.[^.]+$/, '') : 'photo';
+    lastImg = await loadImage(file);
+    await processImage();
+  }
+
+  async function processImage(){
+    if(!lastImg) return;
+    const target = getTarget();
+    const canvas = drawCover(lastImg, target.w, target.h);
+    const targetBytes = target.maxKB * 1024;
+    const blob = await compressToTarget(canvas, targetBytes);
+    const actualKB = Math.round(blob.size / 1024 * 10) / 10;
+    const inRange = actualKB >= target.minKB && actualKB <= target.maxKB;
+
+    previewThumb.src = canvas.toDataURL('image/jpeg', 0.85);
+    previewThumb.classList.add('show');
+
+    result.hidden = false;
+    stampBadge.classList.remove('show');
+    diffLine.classList.remove('show');
+    downloadBtn.classList.remove('show');
+
+    const maxScale = Math.max(actualKB, target.maxKB) * 1.15;
+    setGauge(0, maxScale, target.maxKB);
+    // force reflow so the transition plays from 0
+    void needleGroup.offsetWidth;
+
+    requestAnimationFrame(()=>{
+      setGauge(actualKB, maxScale, target.maxKB);
+      gaugeValue.textContent = actualKB.toLocaleString('ru-RU');
+      const maxLabel = target.maxKB >= 1024
+        ? `${(target.maxKB/1024).toLocaleString('ru-RU',{maximumFractionDigits:1})} МБ`
+        : `${target.maxKB.toLocaleString('ru-RU')} КБ`;
+      targetLabel.textContent = `${target.w}×${target.h} px, от ${target.minKB.toLocaleString('ru-RU')} КБ до ${maxLabel}`;
+    });
+
+    setTimeout(()=>{
+      let diffText;
+      if(actualKB < target.minKB){
+        diffText = `Ниже минимума на ${(target.minKB - actualKB).toLocaleString('ru-RU',{maximumFractionDigits:1})} КБ`;
+      } else if(actualKB > target.maxKB){
+        diffText = `Превышает максимум на ${(actualKB - target.maxKB).toLocaleString('ru-RU',{maximumFractionDigits:1})} КБ`;
+      } else {
+        const headroom = target.maxKB - actualKB;
+        diffText = headroom < 0.1
+          ? 'Ровно на верхней границе допустимого веса'
+          : `В пределах диапазона — до потолка ещё ${headroom.toLocaleString('ru-RU',{maximumFractionDigits:1})} КБ`;
+      }
+      diffLine.textContent = diffText;
+      diffLine.classList.add('show');
+
+      stampBadge.textContent = inRange ? '✓ Точно в требования' : '⚠ Проверьте вес файла';
+      stampBadge.classList.toggle('warn', !inRange);
+      stampBadge.classList.add('show');
+      const url = URL.createObjectURL(blob);
+      downloadBtn.href = url;
+      downloadBtn.download = `${lastFileName}-${target.w}x${target.h}.jpg`;
+      downloadBtn.classList.add('show');
+    }, 1150);
+  }
+})();
+</script>
+</body>
+</html>
